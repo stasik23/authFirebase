@@ -1,5 +1,5 @@
 import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from '../firebase/index.js'
+import { auth } from '../firebase'
 import React, { useEffect, useState } from 'react'
 import './Loader.css'
 
@@ -26,7 +26,10 @@ export const LockedRouter = ({ children }: any) => {
     return (
         <div>
             Locked Router<br />
-            {Authorized ? <>{children}</> : <>Not Auth</>}
+            {Authorized ? <>{children}</> : <>
+            Not Auth
+            <img src="https://memi.klev.club/uploads/posts/2024-04/memi-klev-club-r001-p-memi-negr-s-arbuzom-na-golove-1.jpg" alt="" srcset="" />
+            </>}
         </div>
     )
 }

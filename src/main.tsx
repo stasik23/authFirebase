@@ -12,6 +12,7 @@ import { SighUpPage } from './pages/SighUpPage'
 import ReactDOM from 'react-dom';
 import { LockedRouter } from './route/LockedRouter.tsx';
 import { Logout } from './pages/Logout/index.tsx';
+import { AboutUs } from './pages/AboutUs/index.tsx';
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,13 @@ const router = createBrowserRouter([
     element:
       <Layout>
         <Logout />
+      </Layout>
+  },
+  {
+    path: "/aboutus",
+    element:
+      <Layout>
+        <AboutUs />
       </Layout>
   },
 ])
