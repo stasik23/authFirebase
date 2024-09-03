@@ -1,48 +1,30 @@
-// import React from 'react'
 import { createUserWithEmailAndPassword } from "firebase/auth";
-// import { auth } from '../../firebase'
+import { useForm } from "react-hook-form";
+import { useNavigate } from 'react-router-dom';
 
 // const createUser = {
 //     email: "morgeishtern@gmail.com",
 //     password: "degenerat123"
 // }
 
-// export const SighUpPage = () => {
-// const sighUp = () => {
-//     createUserWithEmailAndPassword(auth, createUser.email, createUser.password)
-//       .then((userCredential) => {
-//         const user = userCredential.user;
-//         console.log("User created", user);
-//       })
-//       .catch((error) => {
-//         const errorCode = error.code;
-//         const errorMessage = error.message;
-//         console.log("Error: ", errorMessage);
-//         console.log("In: ", errorCode);
-//       });
-
-//   }
-//     return (
-//         <div>
-//             <button onClick={sighUp}>createUser</button>
-//         </div >
-//     )
-// }
-
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { auth } from '../../firebase';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 
 
 export const SighUpPage = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const [regEmail, setEmail] = useState<string>('')
   const [regPassword, setPassword] = useState<string>('')
-  const handleSignUp = () => {
+  const navigate = useNavigate()
+
+  const handleSignUp = async() => {
     createUserWithEmailAndPassword(auth, regEmail, regPassword)
       .then((userCredential) => {
         const user = userCredential.user;
         console.log("User created", user);
+        navigate('/login')
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -55,23 +37,42 @@ export const SighUpPage = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <div className="flex flex-col items-center space-y-4">
+      <h1 className='text-4xl'>Register</h1>
         <input
+          {...register("email", {
+            required: "Email is required",
+            pattern: {
+              value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+              message: "Type correct email"
+            }
+          })}
           className="p-2 border border-gray-300 rounded w-80"
           placeholder="Email"
           value={regEmail}
           type="email"
           onChange={(e) => setEmail(e.target.value)}
         />
+        {errors.email && <p>{errors.email.message as string}</p>}
+
         <input
+          {...register("password", {
+            required: "Password is required",
+            minLength: {
+              value: 8,
+              message: "Password must have at least 8 characters"
+            }
+          })}
           className="p-2 border border-gray-300 rounded w-80"
           type="password"
           placeholder="Password"
           value={regPassword}
           onChange={(e) => setPassword(e.target.value)}
         />
+        {errors.password && <p>{errors.password.message as string}</p>}
+
         <button
           className="bg-blue-500 text-white p-2 rounded w-64"
-          onClick={handleSignUp}
+          onClick={handleSubmit(handleSignUp)}
         >
           Register
         </button>
