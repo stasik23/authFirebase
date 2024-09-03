@@ -1,7 +1,7 @@
-import React from 'react'
 
 export const AboutUs = () => {
-  return (
+
+return (
     <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="flex flex-col items-center space-y-4">
             <div>
@@ -13,6 +13,6 @@ export const AboutUs = () => {
             </div>
         </div>
     </div>
-      
-  )
+
+)
 }

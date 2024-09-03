@@ -39,7 +39,7 @@ export const SighUpPage = () => {
   const [regEmail, setEmail] = useState<string>('')
   const [regPassword, setPassword] = useState<string>('')
   const handleSignUp = () => {
-    createUserWithEmailAndPassword({auth, regEmail, regPassword})
+    createUserWithEmailAndPassword(auth, regEmail, regPassword)
       .then((userCredential) => {
         const user = userCredential.user;
         console.log("User created", user);
