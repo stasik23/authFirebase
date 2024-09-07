@@ -1,19 +1,17 @@
 import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from '../firebase'
-import { db } from '../firebase'
+import { auth , db } from '../firebase'
 import { collection, DocumentData, getDocs } from "firebase/firestore";
 import React, { useEffect, useState } from 'react'
 import './Loader.css'
 
 interface HeroList {
-    map(arg0: (el: any) => import("react/jsx-runtime").JSX.Element): React.ReactNode;
     hero: string;
     itembuild: string
     skillbuild: string
 
 }
 
-export const LockedRouter = ({ children }: any) => {
+export const LockedRouter = () => {
     const [Authorized, setAuthorized] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const [heroes, setHeroes] = useState<any>([])
@@ -72,7 +70,7 @@ export const LockedRouter = ({ children }: any) => {
                         type="button"
                         className="bg-blue-500 text-white p-2 rounded w-64"
                     >CLICK FOR DATA</button>
-                    {heroes?.map((el: { hero: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; itembuild: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; skillbuild: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; }) => (
+                    {heroes?.map((el:any) => (
                         <ul className="divide-y divide-gray-300 max-w-sm mt-16 mx-auto px-4 border">
 
                             <li className="py-4">

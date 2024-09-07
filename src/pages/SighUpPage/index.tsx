@@ -17,9 +17,10 @@ export const SighUpPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [regEmail, setEmail] = useState<string>('')
   const [regPassword, setPassword] = useState<string>('')
+  const [passValue, getPassValue] = useState<string>('')
   const navigate = useNavigate()
 
-  const handleSignUp = async() => {
+  const handleSignUp = async () => {
     createUserWithEmailAndPassword(auth, regEmail, regPassword)
       .then((userCredential) => {
         const user = userCredential.user;
@@ -37,7 +38,7 @@ export const SighUpPage = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <div className="flex flex-col items-center space-y-4">
-      <h1 className='text-4xl'>Register</h1>
+        <h1 className='text-4xl'>Register</h1>
         <input
           {...register("email", {
             required: "Email is required",
@@ -69,6 +70,21 @@ export const SighUpPage = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
         {errors.password && <p>{errors.password.message as string}</p>}
+
+        <input {...register("confirmPassword", {
+          required: "Confirm password!",
+          validate: (match) => {
+            const password = getPassValue(regPassword)
+            return match === password || "Passwords should match!"
+          }
+        })}
+          type="password"
+          className="p-2 border border-gray-300 rounded w-80"
+          placeholder="Confirm Password"
+          id="confirmPassword"
+          onChange={(e) => getPassValue(e.target.value)} />
+        
+        {errors.confirmPassword && <p>{errors.confirmPassword.message as string}</p>}
 
         <button
           className="bg-blue-500 text-white p-2 rounded w-64"
