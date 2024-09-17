@@ -63,20 +63,6 @@ export const SighInPage = () => {
         />
         {errors.password && <p>{errors.password.message as string}</p>}
 
-        <input {...register("confirmPassword", {
-          required: "Confirm password!",
-          validate: (match) => {
-            return match === isPassword || "Passwords should match!"
-          }
-        })}
-          type="password"
-          className="p-2 border border-gray-300 rounded w-80"
-          placeholder="Confirm Password"
-          id="confirmPassword"
-          onChange={(e) => getPassValue(e.target.value)} />
-        
-        {errors.confirmPassword && <p>{errors.confirmPassword.message as string}</p>}
-
         <button
           className="bg-blue-500 text-white p-2 rounded w-64"
           onClick={handleSubmit(handleSignIn)}

@@ -1,20 +1,20 @@
 import { onAuthStateChanged } from 'firebase/auth'
-import { auth , db } from '../firebase'
-import { collection, DocumentData, getDocs } from "firebase/firestore";
-import React, { useEffect, useState } from 'react'
+import { auth, db } from '../firebase'
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import { useEffect, useState } from 'react'
 import './Loader.css'
 
 interface HeroList {
+    id: string;
     hero: string;
     itembuild: string
     skillbuild: string
-
 }
 
 export const LockedRouter = () => {
     const [Authorized, setAuthorized] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
-    const [heroes, setHeroes] = useState<any>([])
+    const [heroes, setHeroes] = useState<HeroList[]>([])
 
     useEffect(() => {
         const unsub = onAuthStateChanged(auth, (user) => {
@@ -26,16 +26,20 @@ export const LockedRouter = () => {
             setIsLoading(false)
         })
         return () => unsub();
-    })
-    // loader
-    if (isLoading) return <>
+    }, [])
+
+    // Loader
+    if (isLoading) return (
         <div className='flex flex-col items-center justify-center min-h-screen'>
             <div className="flex flex-col items-center space-y-4">
-                <div className="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                <div className="lds-roller">
+                    <div></div><div></div><div></div><div></div>
+                    <div></div><div></div><div></div><div></div>
+                </div>
             </div>
         </div>
-    </>
-
+    )
+    // Not Authorized page
     if (!Authorized) {
         return (
             <div className='flex flex-col items-center justify-center min-h-screen'>
@@ -50,56 +54,65 @@ export const LockedRouter = () => {
     }
 
     const getQuery = async () => {
-        const heroes = await getDocs(collection(db, "heropool"))
+        const heroesSnapshot = await getDocs(collection(db, "heropool"))
+        const heroList: HeroList[] = []
 
-        const elem: React.SetStateAction<HeroList> | DocumentData[] = []
-        heroes.forEach((doc) => {
-            const el = doc.data()
-            elem.push(el)
-        });
-        setHeroes(elem)
+        heroesSnapshot.forEach((doc) => {
+            const heroData = doc.data() as HeroList
+            heroList.push({ ...heroData, id: doc.id })
+        })
+
+        setHeroes(heroList)
+    }
+
+    const deleteHandler = async (id: string) => {
+        await deleteDoc(doc(db, "heropool", id));
+        getQuery();
     }
 
     return (
-        <div>
-
-            <div className='flex flex-col items-center justify-center min-h-screen'>
-                <div className="flex flex-col items-center space-y-4">
+        <div className='flex flex-col items-center justify-center min-h-screen'>
+            <div className="flex flex-col items-center space-y-4">
+                {heroes.length === 0 && (
                     <button
                         onClick={getQuery}
                         type="button"
                         className="bg-blue-500 text-white p-2 rounded w-64"
-                    >CLICK FOR DATA</button>
-                    {heroes?.map((el:any) => (
-                        <ul className="divide-y divide-gray-300 max-w-sm mt-16 mx-auto px-4 border">
+                    >
+                        CLICK FOR DATA
+                    </button>
+                )}
 
-                            <li className="py-4">
-
-                                <div className="flex items-center space-x-4">
+                {heroes.length === 0 ? (
+                    <div className="mt-16 text-gray-500">Нажмите на кнопку, чтобы загрузить данные.</div>
+                ) : (
+                    <ul className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-xl mt-16 px-4">
+                        {heroes.map((el) => (
+                            <li key={el.id} className="border p-4 rounded-lg shadow">
+                                <div className="flex items-center justify-between">
                                     <span className="text-lg font-bold">{el.hero}</span>
+                                    <span
+                                        onClick={() => deleteHandler(el.id)}
+                                        className="text-red-500 font-bold cursor-pointer"
+                                    >
+                                        ✕
+                                    </span>
                                 </div>
 
-                                <ul className="divide-y divide-gray-300 bg-gray-50 rounded-md px-4 py-2 mt-4">
-                                    <li className="py-2">
-                                        <div className="flex items-center space-x-4">
-                                            <span className="text-md font-medium">{el.itembuild}</span>
-                                        </div>
-                                    </li>
+                                <div className="divide-y divide-gray-300 bg-gray-50 rounded-md px-4 py-2 mt-4">
+                                    <div className="py-2">
+                                        <span className="text-md font-medium">Item Build: {el.itembuild}</span>
+                                    </div>
 
-                                    <li className="py-2">
-                                        <div className="flex items-center space-x-4">
-                                            <span className="text-md font-medium">{el.skillbuild}</span>
-                                        </div>
-                                    </li>
-                                </ul>
-
+                                    <div className="py-2">
+                                        <span className="text-md font-medium">Skill Build: {el.skillbuild}</span>
+                                    </div>
+                                </div>
                             </li>
-
-                        </ul>
-                    ))}
-                </div>
-            </div><br />
+                        ))}
+                    </ul>
+                )}
+            </div>
         </div>
-    )
+    );
 }
-

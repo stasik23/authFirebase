@@ -1,17 +1,14 @@
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import { createRoot } from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-
-import { Layout } from './components/Layout'
-import { SighInPage } from './pages/SighInPage'
-import { SighUpPage } from './pages/SighUpPage'
-import ReactDOM from 'react-dom';
+import { Layout } from './components/Layout';
+import { SighInPage } from './pages/SighInPage';
+import { SighUpPage } from './pages/SighUpPage';
 import { LockedRouter } from './route/LockedRouter.tsx';
-import { Logout } from './pages/Logout/index.tsx';
 import { AboutUs } from './pages/AboutUs/index.tsx';
 
 const router = createBrowserRouter([
@@ -29,31 +26,27 @@ const router = createBrowserRouter([
     element:
       <Layout>
         <SighInPage />
-      </Layout>
+      </Layout>,
   },
   {
     path: "/register",
     element:
       <Layout>
         <SighUpPage />
-      </Layout>
-  },
-  {
-    path: "/logout",
-    element:
-      <Layout>
-        <Logout />
-      </Layout>
+      </Layout>,
   },
   {
     path: "/aboutus",
     element:
       <Layout>
         <AboutUs />
-      </Layout>
+      </Layout>,
   },
-])
+]);
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <RouterProvider router={router} />
-)
+const root = document.getElementById('root');
+if (root) {
+  createRoot(root).render(
+    <RouterProvider router={router} />
+  );
+}

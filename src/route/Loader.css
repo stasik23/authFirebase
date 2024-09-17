@@ -80,6 +80,9 @@
   top: 56px;
   left: 12.28719px;
 }
+
+
+
 @keyframes lds-roller {
   0% {
     transform: rotate(0deg);
