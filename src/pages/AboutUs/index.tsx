@@ -1,17 +1,21 @@
 import { collection } from "firebase/firestore";
-import { db } from '../../firebase';
+import { db , auth } from '../../firebase';
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { Sendler } from "../../utils/Sendler";
+import { Loader } from "../../components/Loader";
+import { useLoader } from "../../utils/LoaderProv";
+import { onAuthStateChanged } from "firebase/auth";
 
 export const AboutUs = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
+    const [Authorized, setAuthorized] = useState(false)
     const [isHero, setHero] = useState<string>('');
     const [isSkill, setSkill] = useState<string>('');
     const [isItem, setItem] = useState<string>('');
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const { isLoading, setLoading } = useLoader();
     const [heroes, setHeroes] = useState<any[]>([]);
 
     const getQuery = async () => {
@@ -28,21 +32,55 @@ export const AboutUs = () => {
         getQuery();
     }, []);
 
+    useEffect(() => {
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+        }, 1000);
+    }, [setLoading]);
+
+    if (isLoading) return <div><Loader /></div>
+
+    useEffect(() => {
+        const unsub = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setAuthorized(true)
+            } else {
+                setAuthorized(false)
+            }
+            setLoading(false)
+        })
+        return () => unsub();
+    }, [])
+
     // Send data function
     const sendDoc = async () => {
         try {
-            setIsLoading(true);
-            await Sendler(isHero, isSkill, isItem, reset, setIsLoading);
+            setLoading(true);
+            await Sendler(isHero, isSkill, isItem, reset, setLoading);
             toast.success("Data successfully sent!");
             console.log(getQuery());
-             
+
         } catch (error) {
             console.error("Error adding document: ", error);
             toast.error("Failed to send data.");
         } finally {
-            setIsLoading(false);
+            setLoading(false);
         }
     };
+
+    if (!Authorized) {
+        return (
+            <div className='flex flex-col items-center justify-center min-h-screen'>
+                <div className="flex flex-col items-center space-y-4">
+                    <h1 className='text-4xl'>Not Auth</h1>
+                    <a href='/register' className='hover:scale-125'>Register</a>
+                    <a href='/login' className='hover:scale-125'>Login</a>
+                    <img src="https://memi.klev.club/uploads/posts/2024-04/memi-klev-club-r001-p-memi-negr-s-arbuzom-na-golove-1.jpg" alt="" />
+                </div>
+            </div>
+        )
+    }
 
     return (
         <>

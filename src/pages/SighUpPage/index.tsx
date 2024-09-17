@@ -7,10 +7,12 @@ import { useNavigate } from 'react-router-dom';
 //     password: "degenerat123"
 // }
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { auth } from '../../firebase';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import { Loader } from "../../components/Loader";
+import { useLoader } from "../../utils/LoaderProv";
 
 
 export const SighUpPage = () => {
@@ -18,7 +20,18 @@ export const SighUpPage = () => {
   const [regEmail, setEmail] = useState<string>('')
   const [regPassword, setPassword] = useState<string>('')
   const [passValue, getPassValue] = useState<string>('')
+  const { isLoading, setLoading } = useLoader();
   const navigate = useNavigate()
+
+
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, [setLoading]);
+
+  if (isLoading) return <div><Loader/></div>
 
   const handleSignUp = async () => {
     createUserWithEmailAndPassword(auth, regEmail, regPassword)
@@ -83,7 +96,7 @@ export const SighUpPage = () => {
           placeholder="Confirm Password"
           id="confirmPassword"
           onChange={(e) => getPassValue(e.target.value)} />
-        
+
         {errors.confirmPassword && <p>{errors.confirmPassword.message as string}</p>}
 
         <button
@@ -97,3 +110,7 @@ export const SighUpPage = () => {
     </div>
   )
 }
+function setLoading(arg0: boolean) {
+  throw new Error("Function not implemented.");
+}
+

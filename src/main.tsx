@@ -10,6 +10,7 @@ import { SighInPage } from './pages/SighInPage';
 import { SighUpPage } from './pages/SighUpPage';
 import { LockedRouter } from './route/LockedRouter.tsx';
 import { AboutUs } from './pages/AboutUs/index.tsx';
+import { LoaderProvider } from './utils/LoaderProv.tsx';
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,9 @@ const router = createBrowserRouter([
 const root = document.getElementById('root');
 if (root) {
   createRoot(root).render(
-    <RouterProvider router={router} />
+    <LoaderProvider>
+      <RouterProvider router={router} />
+    </LoaderProvider>
+
   );
 }

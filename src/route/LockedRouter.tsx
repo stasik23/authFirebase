@@ -39,6 +39,7 @@ export const LockedRouter = () => {
             </div>
         </div>
     )
+    
     // Not Authorized page
     if (!Authorized) {
         return (
@@ -84,7 +85,7 @@ export const LockedRouter = () => {
                 )}
 
                 {heroes.length === 0 ? (
-                    <div className="mt-16 text-gray-500">Нажмите на кнопку, чтобы загрузить данные.</div>
+                    <div className="mt-16 text-gray-500">Натисніть на кнопку, щоб завантажити данні.</div>
                 ) : (
                     <ul className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-xl mt-16 px-4">
                         {heroes.map((el) => (

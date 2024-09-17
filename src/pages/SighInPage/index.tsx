@@ -1,22 +1,33 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { auth } from '../../firebase';
 import { SignIn } from '../../utils/SighIn';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
+import { Loader } from '../../components/Loader';
+import { useLoader } from '../../utils/LoaderProv';
 
 
 export const SighInPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [isEmail, setEmail] = useState<string>('')
   const [isPassword, setPassword] = useState<string>('')
-  const [passValue, getPassValue] = useState<string>('')
+  const { isLoading, setLoading } = useLoader();
   const navigate = useNavigate()
 
   // const handleSignIn = () => {
   //   SignIn({ auth, email: "lega100proch@gmail.com", password: "Degenerat1234k" });
   // };
+
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, [setLoading]);
+
+  if (isLoading) return <div><Loader/></div>
 
   const handleSignIn = async () => {
     SignIn({ auth, email: isEmail, password: isPassword });
