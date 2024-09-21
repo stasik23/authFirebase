@@ -3,8 +3,10 @@ import { auth, db } from '../firebase'
 import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { useEffect, useState } from 'react'
 import './Loader.css'
+import { HeroList } from '../components/HeroList';
+import { Loader } from '../components/Loader';
 
-interface HeroList {
+export interface IHeroItem {
     id: string;
     hero: string;
     itembuild: string
@@ -14,7 +16,8 @@ interface HeroList {
 export const LockedRouter = () => {
     const [Authorized, setAuthorized] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
-    const [heroes, setHeroes] = useState<HeroList[]>([])
+    const [heroes, setHeroes] = useState<IHeroItem[]>([])
+    // const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
         const unsub = onAuthStateChanged(auth, (user) => {
@@ -30,16 +33,9 @@ export const LockedRouter = () => {
 
     // Loader
     if (isLoading) return (
-        <div className='flex flex-col items-center justify-center min-h-screen'>
-            <div className="flex flex-col items-center space-y-4">
-                <div className="lds-roller">
-                    <div></div><div></div><div></div><div></div>
-                    <div></div><div></div><div></div><div></div>
-                </div>
-            </div>
-        </div>
+        <Loader/>
     )
-    
+
     // Not Authorized page
     if (!Authorized) {
         return (
@@ -56,10 +52,10 @@ export const LockedRouter = () => {
 
     const getQuery = async () => {
         const heroesSnapshot = await getDocs(collection(db, "heropool"))
-        const heroList: HeroList[] = []
+        const heroList: IHeroItem[] = []
 
         heroesSnapshot.forEach((doc) => {
-            const heroData = doc.data() as HeroList
+            const heroData = doc.data() as IHeroItem
             heroList.push({ ...heroData, id: doc.id })
         })
 
@@ -87,31 +83,7 @@ export const LockedRouter = () => {
                 {heroes.length === 0 ? (
                     <div className="mt-16 text-gray-500">Натисніть на кнопку, щоб завантажити данні.</div>
                 ) : (
-                    <ul className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-xl mt-16 px-4">
-                        {heroes.map((el) => (
-                            <li key={el.id} className="border p-4 rounded-lg shadow">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-lg font-bold">{el.hero}</span>
-                                    <span
-                                        onClick={() => deleteHandler(el.id)}
-                                        className="text-red-500 font-bold cursor-pointer"
-                                    >
-                                        ✕
-                                    </span>
-                                </div>
-
-                                <div className="divide-y divide-gray-300 bg-gray-50 rounded-md px-4 py-2 mt-4">
-                                    <div className="py-2">
-                                        <span className="text-md font-medium">Item Build: {el.itembuild}</span>
-                                    </div>
-
-                                    <div className="py-2">
-                                        <span className="text-md font-medium">Skill Build: {el.skillbuild}</span>
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                    <HeroList heroes={heroes} deleteHandler={deleteHandler} getQuery={getQuery} />
                 )}
             </div>
         </div>

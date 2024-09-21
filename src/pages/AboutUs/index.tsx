@@ -1,5 +1,5 @@
-import { collection } from "firebase/firestore";
-import { db , auth } from '../../firebase';
+import { collection, DocumentData, getDocs } from "firebase/firestore";
+import { db, auth } from '../../firebase';
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -11,18 +11,23 @@ import { onAuthStateChanged } from "firebase/auth";
 
 export const AboutUs = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
-    const [Authorized, setAuthorized] = useState(false)
+    const [Authorized, setAuthorized] = useState(false);
     const [isHero, setHero] = useState<string>('');
     const [isSkill, setSkill] = useState<string>('');
     const [isItem, setItem] = useState<string>('');
     const { isLoading, setLoading } = useLoader();
     const [heroes, setHeroes] = useState<any[]>([]);
 
+    // refetch
     const getQuery = async () => {
         try {
-            const querySnapshot = await collection(db, "heropool").get()
-            const data = querySnapshot.docs.map((doc: { data: () => any; }) => doc.data());
-            setHeroes(data);
+            const querySnapshot = await getDocs(collection(db, 'heropool'));
+            const heroes: DocumentData[] = [];
+            querySnapshot.forEach((doc) => {
+                heroes.push({ id: doc.id, ...doc.data() });
+            });
+            setHeroes(heroes);
+            console.log(heroes);
         } catch (error) {
             console.error("Error fetching data: ", error);
         }
@@ -33,25 +38,18 @@ export const AboutUs = () => {
     }, []);
 
     useEffect(() => {
-        setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-        }, 1000);
-    }, [setLoading]);
-
-    if (isLoading) return <div><Loader /></div>
-
-    useEffect(() => {
         const unsub = onAuthStateChanged(auth, (user) => {
             if (user) {
-                setAuthorized(true)
+                setAuthorized(true);
             } else {
-                setAuthorized(false)
+                setAuthorized(false);
             }
-            setLoading(false)
-        })
+            setLoading(false);
+        });
         return () => unsub();
-    }, [])
+    }, [setLoading]);
+
+    if (isLoading) return <div><Loader /></div>;
 
     // Send data function
     const sendDoc = async () => {
@@ -59,8 +57,8 @@ export const AboutUs = () => {
             setLoading(true);
             await Sendler(isHero, isSkill, isItem, reset, setLoading);
             toast.success("Data successfully sent!");
-            console.log(getQuery());
-
+            reset();
+            await getQuery();
         } catch (error) {
             console.error("Error adding document: ", error);
             toast.error("Failed to send data.");
@@ -79,7 +77,7 @@ export const AboutUs = () => {
                     <img src="https://memi.klev.club/uploads/posts/2024-04/memi-klev-club-r001-p-memi-negr-s-arbuzom-na-golove-1.jpg" alt="" />
                 </div>
             </div>
-        )
+        );
     }
 
     return (
@@ -133,6 +131,15 @@ export const AboutUs = () => {
                     >
                         {isLoading ? 'Sending...' : 'Send'}
                     </button>
+
+                    {/* Отображение списка героев */}
+                    {/* <ul className="w-80 mt-4">
+                        {heroes.map((hero) => (
+                            <li key={hero.id} className="p-2 border-b border-gray-300">
+                                {hero.hero} - {hero.skillbuild} - {hero.itembuild}
+                            </li>
+                        ))}
+                    </ul> */}
                 </div>
             </div>
             <ToastContainer />
