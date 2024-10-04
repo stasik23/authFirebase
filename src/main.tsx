@@ -21,51 +21,48 @@ const queryClient = new QueryClient()
 const router = createBrowserRouter([
   {
     path: "/home",
-    element:
-      <ThemeSwitch>
-        <Layout>
-          <LockedRouter>
-            <App />
-          </LockedRouter>
-        </Layout>
-      </ThemeSwitch>
+    element: (
+      <Layout>
+        <LockedRouter>
+          <App />
+        </LockedRouter>
+        {/* <ThemeSwitch /> */}
+      </Layout>
+    )
   },
   {
     path: "/login",
-    element:
-      <ThemeSwitch>
-        <Layout>
-          <SighInPage />
-        </Layout>,
-      </ThemeSwitch>
-
+    element: (
+      <Layout>
+        <SighInPage />
+        {/* <ThemeSwitch /> */}
+      </Layout>
+    )
   },
   {
     path: "/register",
-    element:
-      <ThemeSwitch>
-        <Layout>
-          <SighUpPage />
-        </Layout>,
-      </ThemeSwitch>
-
+    element: (
+      <Layout>
+        <SighUpPage />
+        {/* <ThemeSwitch /> */}
+      </Layout>
+    )
   },
   {
     path: "/aboutus",
-    element:
-      <ThemeSwitch>
-        <Layout>
-          <AboutUs />
-        </Layout>,
-      </ThemeSwitch>
-
+    element: (
+      <Layout>
+        <AboutUs />
+        {/* <ThemeSwitch /> */}
+      </Layout>
+    )
   },
   {
     path: '*',
-    element:
-      <NotFound />
+    element: <NotFound />
   }
 ]);
+
 
 const root = document.getElementById('root');
 if (root) {

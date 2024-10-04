@@ -6,7 +6,6 @@ import styled, { ThemeProvider, createGlobalStyle } from "styled-components";
 const light = { background: "lightGray" };
 const dark = { background: "black" };
 
-
 const GlobalStyle = createGlobalStyle`
   body {
     background: ${(props) => props.theme.background};
@@ -15,24 +14,24 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const Wrapper = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
+  display: inline-block;
   padding: 0.5em;
 `;
+
 export const ThemeSwitch = () => {
-    const [isDark, setDark] = useState(false);
-    const theme = isDark ? dark : light;
-    return (
-        <ThemeProvider theme={theme}>
-            <Wrapper>
-                <GlobalStyle />
-                <ReactThemeToggleButton
-                    isDark={isDark}
-                    invertedIconLogic
-                    onChange={() => setDark((prev) => !prev)}
-                />
-            </Wrapper>
-        </ThemeProvider>
-    );
-}
+  const [isDark, setDark] = useState(false);
+  const theme = isDark ? dark : light;
+
+  return (
+    <ThemeProvider theme={theme}>
+      <Wrapper>
+        <GlobalStyle />
+        <ReactThemeToggleButton
+          isDark={isDark}
+          invertedIconLogic
+          onChange={() => setDark((prev) => !prev)}
+        />
+      </Wrapper>
+    </ThemeProvider>
+  );
+};

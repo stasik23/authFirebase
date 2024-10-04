@@ -7,6 +7,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import { Loader } from "../../components/Loader";
 import { useLoader } from "../../utils/LoaderProv";
+import styled from "styled-components";
+
+const SignUpPageWrapper = styled.div`
+  color: ${(props) => (props.theme.isDark ? 'white' : 'black')};
+`;
 
 export const SighUpPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -23,7 +28,7 @@ export const SighUpPage = () => {
     }, 1000);
   }, [setLoading]);
 
-  if (isLoading) return <div><Loader/></div>
+  if (isLoading) return <div><Loader /></div>
 
   const handleSignUp = async () => {
     createUserWithEmailAndPassword(auth, regEmail, regPassword)
@@ -41,65 +46,67 @@ export const SighUpPage = () => {
 
   }
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <div className="flex flex-col items-center space-y-4">
-        <h1 className="text-6xl font-bold text-gray-700 mb-4">Register</h1>
-        <input
-          {...register("email", {
-            required: "Email is required",
-            pattern: {
-              value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-              message: "Type correct email"
+    <SignUpPageWrapper>
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex flex-col items-center space-y-4">
+          <h1 className="text-6xl font-bold text-gray-700 mb-4">Register</h1>
+          <input
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                message: "Type correct email"
+              }
+            })}
+            className="p-2 border border-gray-300 rounded w-80"
+            placeholder="Email"
+            value={regEmail}
+            type="email"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          {errors.email && <p>{errors.email.message as string}</p>}
+
+          <input
+            {...register("password", {
+              required: "Password is required",
+              minLength: {
+                value: 8,
+                message: "Password must have at least 8 characters"
+              }
+            })}
+            className="p-2 border border-gray-300 rounded w-80"
+            type="password"
+            placeholder="Password"
+            value={regPassword}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {errors.password && <p>{errors.password.message as string}</p>}
+
+          <input {...register("confirmPassword", {
+            required: "Confirm password!",
+            validate: (match) => {
+              const password = getPassValue(regPassword)
+              return match === password || "Passwords should match!"
             }
           })}
-          className="p-2 border border-gray-300 rounded w-80"
-          placeholder="Email"
-          value={regEmail}
-          type="email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        {errors.email && <p>{errors.email.message as string}</p>}
+            type="password"
+            className="p-2 border border-gray-300 rounded w-80"
+            placeholder="Confirm Password"
+            id="confirmPassword"
+            onChange={(e) => getPassValue(e.target.value)} />
 
-        <input
-          {...register("password", {
-            required: "Password is required",
-            minLength: {
-              value: 8,
-              message: "Password must have at least 8 characters"
-            }
-          })}
-          className="p-2 border border-gray-300 rounded w-80"
-          type="password"
-          placeholder="Password"
-          value={regPassword}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {errors.password && <p>{errors.password.message as string}</p>}
+          {errors.confirmPassword && <p>{errors.confirmPassword.message as string}</p>}
 
-        <input {...register("confirmPassword", {
-          required: "Confirm password!",
-          validate: (match) => {
-            const password = getPassValue(regPassword)
-            return match === password || "Passwords should match!"
-          }
-        })}
-          type="password"
-          className="p-2 border border-gray-300 rounded w-80"
-          placeholder="Confirm Password"
-          id="confirmPassword"
-          onChange={(e) => getPassValue(e.target.value)} />
-
-        {errors.confirmPassword && <p>{errors.confirmPassword.message as string}</p>}
-
-        <button
-          className="bg-blue-500 text-white p-2 rounded w-64"
-          onClick={handleSubmit(handleSignUp)}
-        >
-          Register
-        </button>
-        <ToastContainer />
+          <button
+            className="bg-blue-500 text-white p-2 rounded w-64"
+            onClick={handleSubmit(handleSignUp)}
+          >
+            Register
+          </button>
+          <ToastContainer />
+        </div>
       </div>
-    </div>
+    </SignUpPageWrapper>
   )
 }
 

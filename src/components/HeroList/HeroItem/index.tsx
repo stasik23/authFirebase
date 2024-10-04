@@ -8,7 +8,7 @@ interface IHeroProps {
 
 export const HeroItem = ({ deleteHandler, hero }: IHeroProps) => {
     return (
-        <li className="border p-4 rounded-lg shadow">
+        <li className="divide-gray-300 bg-gray-50 border p-4 rounded-lg shadow">
             <div className="flex items-center justify-between">
                 <span className="text-lg font-bold">{hero.hero}</span>
                 <span
@@ -19,7 +19,7 @@ export const HeroItem = ({ deleteHandler, hero }: IHeroProps) => {
                 </span>
             </div>
 
-            <div className="divide-y divide-gray-300 bg-gray-50 rounded-md px-4 py-2 mt-4">
+            <div className="divide-y divide-gray-400 bg-gray-100 rounded-md px-4 py-2 mt-4">
                 <div className="py-2">
                     <span className="text-md font-medium">Item Build: {hero.itembuild}</span>
                 </div>
