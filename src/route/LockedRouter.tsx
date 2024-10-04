@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react'
 import './Loader.css'
 import { HeroList } from '../components/HeroList';
 import { Loader } from '../components/Loader';
-
+import { NotAuthorized } from '../components/NotAuthorized';
+import { useQuery } from '@tanstack/react-query'
 export interface IHeroItem {
     id: string;
     hero: string;
@@ -15,76 +16,77 @@ export interface IHeroItem {
 
 export const LockedRouter = () => {
     const [Authorized, setAuthorized] = useState(false)
-    const [isLoading, setIsLoading] = useState(true)
-    const [heroes, setHeroes] = useState<IHeroItem[]>([])
-    // const [isEditing, setIsEditing] = useState(false);
+    // const [isLoading, setIsLoading] = useState(true)
+    // const [heroes, setHeroes] = useState<IHeroItem[]>([])
 
-    useEffect(() => {
-        const unsub = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                setAuthorized(true)
-            } else {
-                setAuthorized(false)
-            }
-            setIsLoading(false)
-        })
-        return () => unsub();
-    }, [])
+    const { isLoading, data, refetch } = useQuery({
+        // queryKey: ['heropool'],
+        // queryFn: async() =>
+        //     fetch('https://dummyjson.com/todo/1').then((res) =>
+        //         res.json(),
+        //     ),
+        //     await getDocs(collection(db, "heropool"))
+        queryKey: ['repoData'],
+        queryFn: async () => {
+            const querySnapshot = await getDocs(collection(db, 'heropool'));
+            return querySnapshot.docs.map((doc) => ({ data: doc.data() as IHeroItem, id: doc.id }));
+        }
+    })
 
-    // Loader
-    if (isLoading) return (
-        <Loader/>
-    )
+    console.log(data);
+    
+    // useEffect(() => {
+    //     const unsub = onAuthStateChanged(auth, async (user) => {
+    //         if (user) {
+    //             setAuthorized(true)
+    //             const result = await getQuery()
+    //             setHeroes(result);
+    //         } else {
+    //             setAuthorized(false)
+    //         }
+    // setIsLoading(false)
+    //     })
+    //     return () => unsub();
+    // }, [])
 
-    // Not Authorized page
-    if (!Authorized) {
-        return (
-            <div className='flex flex-col items-center justify-center min-h-screen'>
-                <div className="flex flex-col items-center space-y-4">
-                    <h1 className='text-4xl'>Not Auth</h1>
-                    <a href='/register' className='hover:scale-125'>Register</a>
-                    <a href='/login' className='hover:scale-125'>Login</a>
-                    <img src="https://memi.klev.club/uploads/posts/2024-04/memi-klev-club-r001-p-memi-negr-s-arbuzom-na-golove-1.jpg" alt="" />
-                </div>
-            </div>
-        )
-    }
+    // const getQuery = async () => {
+    //     const heroesSnapshot = data
+    //     console.log(data);
 
-    const getQuery = async () => {
-        const heroesSnapshot = await getDocs(collection(db, "heropool"))
-        const heroList: IHeroItem[] = []
+    //     const heroList: IHeroItem[] = [];
+    //     if (heroesSnapshot)
+    //         heroesSnapshot.forEach((doc) => {
+    //             const heroData = doc.data() as IHeroItem;
+    //             heroList.push({ ...heroData, id: doc.id });
+    //         });
+    //     return heroList
 
-        heroesSnapshot.forEach((doc) => {
-            const heroData = doc.data() as IHeroItem
-            heroList.push({ ...heroData, id: doc.id })
-        })
-
-        setHeroes(heroList)
-    }
+    // }
 
     const deleteHandler = async (id: string) => {
         await deleteDoc(doc(db, "heropool", id));
-        getQuery();
+        refetch;
     }
+
+    // Loader
+    if (isLoading) return <Loader />;
+
+
+    // Not Authorized page
+    if (!Authorized) { <NotAuthorized /> }
 
     return (
         <div className='flex flex-col items-center justify-center min-h-screen'>
             <div className="flex flex-col items-center space-y-4">
-                {heroes.length === 0 && (
-                    <button
-                        onClick={getQuery}
-                        type="button"
-                        className="bg-blue-500 text-white p-2 rounded w-64"
-                    >
-                        CLICK FOR DATA
-                    </button>
-                )}
-
-                {heroes.length === 0 ? (
-                    <div className="mt-16 text-gray-500">Натисніть на кнопку, щоб завантажити данні.</div>
+                {/* TODO do auto writing on HeroList, => TODO Completed */}
+                {data?.length === 0 ? (
+                    <div className="mt-16 text-gray-500">Storage empty</div>
                 ) : (
-                    <HeroList heroes={heroes} deleteHandler={deleteHandler} getQuery={getQuery} />
+                    <HeroList heroes={data} deleteHandler={deleteHandler} refetch={refetch} />
                 )}
+                {/* {heroes.map(() => (
+                    <HeroList heroes={heroes} deleteHandler={deleteHandler} getQuery={getQuery} />
+                ))} */}
             </div>
         </div>
     );

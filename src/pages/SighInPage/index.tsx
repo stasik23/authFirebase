@@ -16,10 +16,6 @@ export const SighInPage = () => {
   const { isLoading, setLoading } = useLoader();
   const navigate = useNavigate()
 
-  // const handleSignIn = () => {
-  //   SignIn({ auth, email: "lega100proch@gmail.com", password: "Degenerat1234k" });
-  // };
-
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
@@ -39,7 +35,7 @@ export const SighInPage = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <div className="flex flex-col items-center space-y-4">
-      <h1 className='text-4xl'>Login</h1>
+      <h1 className="text-6xl font-bold text-gray-700 mb-4">Login</h1>
       <input
           {...register("email", {
             required: "Email is required",

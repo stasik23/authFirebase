@@ -1,19 +1,12 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
-
-// const createUser = {
-//     email: "morgeishtern@gmail.com",
-//     password: "degenerat123"
-// }
-
 import { useEffect, useState } from 'react'
 import { auth } from '../../firebase';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import { Loader } from "../../components/Loader";
 import { useLoader } from "../../utils/LoaderProv";
-
 
 export const SighUpPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -22,7 +15,6 @@ export const SighUpPage = () => {
   const [passValue, getPassValue] = useState<string>('')
   const { isLoading, setLoading } = useLoader();
   const navigate = useNavigate()
-
 
   useEffect(() => {
     setLoading(true);
@@ -51,7 +43,7 @@ export const SighUpPage = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <div className="flex flex-col items-center space-y-4">
-        <h1 className='text-4xl'>Register</h1>
+        <h1 className="text-6xl font-bold text-gray-700 mb-4">Register</h1>
         <input
           {...register("email", {
             required: "Email is required",
@@ -109,8 +101,5 @@ export const SighUpPage = () => {
       </div>
     </div>
   )
-}
-function setLoading(arg0: boolean) {
-  throw new Error("Function not implemented.");
 }
 
